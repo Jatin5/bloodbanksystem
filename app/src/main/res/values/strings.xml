@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">bloodbanksystem</string>
+    <string name="title_activity_home">Home</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+
+    <string name="about">The reach of Android is over 97% of all mobile devices across India, thus creating an Android Application would help connect with majority of population. The android application will be developed compatible up to the latest version release of Android Nougat. The application will feature a navigation drawer with options comprising for a donor, a recipient and other relevant information. The donor page will allow anyone who wishes to donate, to book for a particular slot in any upcoming blood donation camp. The recipient shall request, with relevant details, for blood requirements and the message of the same shall be sent to 10 nearby donors instantly. Other general details about blood donation shall also be included in the application.</string>
+</resources>

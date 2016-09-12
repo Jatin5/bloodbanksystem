@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:title="Home" />
+        <item
+            android:id="@+id/nav_up"
+            android:title="Upcoming Camps" />
+        <item
+            android:id="@+id/nav_don"
+            android:title="Donate" />
+        <item
+            android:id="@+id/nav_req"
+            android:title="Request" />
+        <item
+            android:id="@+id/nav_det"
+            android:title="Details" />
+        <item
+            android:id="@+id/nav_abt"
+            android:title="About" />
+        <item
+            android:id="@+id/nav_log"
+            android:title="Log Out" />
+    </group>
+
+
+
+</menu>
