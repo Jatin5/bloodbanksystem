@@ -1,54 +1,65 @@
 package com.jatgo.bloodbanksystem;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.view.View;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.jatgo.bloodbanksystem.AboutUs.About_Us;
+import com.jatgo.bloodbanksystem.Details.Detail;
+import com.jatgo.bloodbanksystem.Details.DetailsFrag;
+import com.jatgo.bloodbanksystem.Donate.DonateFrag;
 import com.jatgo.bloodbanksystem.Home_Panel.panel;
+import com.jatgo.bloodbanksystem.Request.ReqFrag;
 import com.jatgo.bloodbanksystem.Upcoming.Upcoming_Camps;
 
-public class Home extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+import java.util.ArrayList;
+import java.util.List;
+
+
+public class Home extends AppCompatActivity{
+
+    private Toolbar toolbar;
+    private TabLayout tabLayout;
+    private ViewPager viewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
+        viewPager = (ViewPager) findViewById(R.id.viewpager);
+        setupViewPager(viewPager);
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(viewPager);
+
     }
 
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
+    private void setupViewPager(ViewPager viewPager) {
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+        adapter.addFragment(new Upcoming_Camps(), "Upcoming");
+        adapter.addFragment(new DonateFrag(), "Donate");
+        adapter.addFragment(new ReqFrag(), "Request");
+        viewPager.setAdapter(adapter);
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -68,42 +79,50 @@ public class Home extends AppCompatActivity
         if (id == R.id.action_settings) {
             return true;
         }
+        else if(id == R.id.action_det)
+        {
+            Toast.makeText(Home.this,"Opens Details", Toast.LENGTH_LONG).show();
+            Intent i = new Intent(Home.this, Detail.class);
+            startActivity(i);
+        }
+        else if(id == R.id.action_log)
+        {
+            Toast.makeText(Home.this,"Logs Out", Toast.LENGTH_LONG).show();
+            Intent i = new Intent(Home.this, LoginActivity.class);
+            startActivity(i);
+        }
 
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-        Fragment fragment = null;
 
-        if (id == R.id.nav_home) {
-            fragment = new panel();
-        } else if (id == R.id.nav_up) {
-            fragment = new Upcoming_Camps();
-        } else if (id == R.id.nav_don) {
-            fragment = null;
-        } else if (id == R.id.nav_req) {
-            fragment = null;
-        } else if (id == R.id.nav_det) {
-            fragment = null;
-        } else if (id == R.id.nav_abt) {
-            fragment = new About_Us();
-        } else if (id == R.id.nav_log) {
-            fragment = null;
+    class ViewPagerAdapter extends FragmentPagerAdapter {
+        private final List<Fragment> mFragmentList = new ArrayList<>();
+        private final List<String> mFragmentTitleList = new ArrayList<>();
+
+        public ViewPagerAdapter(FragmentManager manager) {
+            super(manager);
         }
 
-        if(fragment!=null) {
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.rel, fragment);
-            fragmentTransaction.commit();
+        @Override
+        public Fragment getItem(int position) {
+            return mFragmentList.get(position);
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
+        @Override
+        public int getCount() {
+            return mFragmentList.size();
+        }
+
+        public void addFragment(Fragment fragment, String title) {
+            mFragmentList.add(fragment);
+            mFragmentTitleList.add(title);
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return mFragmentTitleList.get(position);
+        }
     }
+
 }
