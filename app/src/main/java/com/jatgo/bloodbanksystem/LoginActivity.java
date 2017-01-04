@@ -2,6 +2,7 @@ package com.jatgo.bloodbanksystem;
 
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -19,20 +20,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.jatgo.bloodbanksystem.Home;
-import com.jatgo.bloodbanksystem.R;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.BasicHttpParams;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -40,9 +36,12 @@ public class LoginActivity extends AppCompatActivity {
 
     ArrayList<HashMap<String, String>> personList;
     String myJSON;
+    public static String id , bg;
+    public static int count;
+    int c=0;
     JSONArray peoples = null;
     SharedPreferences sharedpreferences;
-    private static final String TAG_RESULTS="result";
+    ArrayList<HashMap<String, String>> jsonlist = new ArrayList<HashMap<String, String>>();
     private static final boolean AUTO_HIDE = true;
     private static final int AUTO_HIDE_DELAY_MILLIS = 0;
     private static final int UI_ANIMATION_DELAY = 300;
@@ -92,6 +91,8 @@ public class LoginActivity extends AppCompatActivity {
         editor.putString("pass","test");
         editor.commit();
 
+        new getDataTask().execute("http://bloodbank-94437.onmodulus.net/api/status");
+
         Button btn = (Button)findViewById(R.id.buttonlogin);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -106,102 +107,177 @@ public class LoginActivity extends AppCompatActivity {
                 String s1=et1.getText().toString();
                 String s2=et2.getText().toString();
 
+                Log.d("aaaaaaaaaaa","One");
+                int i=0;
+                try {
 
-                if(email.equals(s1)&&pass.equals(s2))
-                {
-                    Intent i =new Intent(LoginActivity.this,Home.class);
-                    startActivity(i);
+                    if(email.equals(s1)&&pass.equals(s2))
+                    {
+
+                        id="5843107c9be7b6581e00002a";
+                        count=0;
+                        bg="B+";
+                        Intent j =new Intent(LoginActivity.this,Home.class);
+                        startActivity(j);
+                    }
+                    else {
+
+                        while (c != 1) {
+                            Log.d("aaaaaaaaaaa","Atak Gaya");
+                        }
+
+                        int r = 0;
+
+                        for (i = 0; i < jsonlist.size(); i++) {
+                            Log.d("aaaaaaaaaaa", "Three");
+                            if (jsonlist.get(i).get("Email").equals(s1) && jsonlist.get(i).get("Password").equals(s2)) {
+                                r=1;
+                                Log.d("qqqqqqqq",jsonlist.get(i).get("Email")+" "+jsonlist.get(i).get("Password"));
+                                id = jsonlist.get(i).get("_id");
+                                bg = jsonlist.get(i).get("Blood Group");
+                                count = Integer.parseInt(jsonlist.get(i).get("Count"));
+                                Intent j = new Intent(LoginActivity.this, Home.class);
+                                startActivity(j);
+                                Log.d("aaaaaaaaaaa", "Two");
+                                break;
+                            }
+
+                        }
+                        if(r==0)
+                        {
+                            et2.setText("");
+                            Toast.makeText(LoginActivity.this,"Incorrect Username or Password",Toast.LENGTH_LONG).show();
+
+                        }
+                    }
+
                 }
-                else
+                catch (Exception e)
                 {
-                    et2.setText("");
-                    Toast.makeText(LoginActivity.this,"Incorrect Username or Password",Toast.LENGTH_LONG).show();
+                    e.printStackTrace();
                 }
 
             }
         });
     }
 
-    public void getData(){
-        /*
-        class GetDataJSON extends AsyncTask<String, Void, String> {
 
-            @Override
-            protected String doInBackground(String... params) {
-                DefaultHttpClient httpclient = new DefaultHttpClient(new BasicHttpParams());
-                HttpPost httppost = new HttpPost("");
+    class getDataTask extends AsyncTask<String, Void, String> {
 
-                InputStream inputStream = null;
-                String result = null;
-                try {
-                    HttpResponse response = httpclient.execute(httppost);
-                    HttpEntity entity = response.getEntity();
+        ProgressDialog progressDialog;
 
-                    inputStream = entity.getContent();
-                    // json is UTF-8 by default
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"), 8);
-                    StringBuilder sb = new StringBuilder();
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
 
-                    String line = null;
-                    while ((line = reader.readLine()) != null)
-                    {
-                        sb.append(line + "\n");
-                    }
-                    result = sb.toString();
-                } catch (Exception e) {
-                    // Oops
-                }
-                finally {
-                    try{if(inputStream != null)inputStream.close();}catch(Exception squish){}
-                }
-                return result;
-            }
+            progressDialog =new ProgressDialog(LoginActivity.this);
+            progressDialog.setMessage("Loading Data ...");
+            progressDialog.show();
 
-            @Override
-            protected void onPostExecute(String result){
-                myJSON=result;
-                int flag = 0;
-                try {
-                    final EditText et1 = (EditText)findViewById(R.id.et1);
-                    final EditText et2 = (EditText)findViewById(R.id.et2);
-                    JSONObject jsonObj = new JSONObject(myJSON);
-                    peoples = jsonObj.getJSONArray(TAG_RESULTS);
-                    for (int i = 0; i < peoples.length(); i++) {
-                        JSONObject c = peoples.getJSONObject(i);
-                        if(et1.getText().toString().equals(c.getString("Email")) && et2.getText().toString().equals(c.getString("Password"))){
-                            flag = 1;
-                            sharedpreferences = getApplicationContext().getSharedPreferences("MyPref", MODE_PRIVATE);
-                            SharedPreferences.Editor editor = sharedpreferences.edit();
-                            editor.putString("Email", c.getString("Email"));
-                            editor.putString("Name", c.getString("Name"));
-                            editor.putString("Phone", c.getString("Phone"));
-                            editor.putString("BloodGroup", c.getString("BloodGroup"));
-                            editor.commit();
-                            break;
-                        }else{
-                            flag =0;
-                        }
-                    }
-                    if(flag == 1){
-                        Intent i = new Intent(LoginActivity.this,Home.class);
-                        startActivity(i);
-                    }else{
-                        Toast.makeText(getApplicationContext(), "Not Registered", Toast.LENGTH_SHORT).show();
-                    }
-                }
-                catch (Exception e){
-                    Log.e("log_tag","Error during Login: " + e.toString());
-                }
-            }
         }
 
-        GetDataJSON g = new GetDataJSON();
-        g.execute();
-        */
+        @Override
+        protected String doInBackground(String... params) {
+
+            try{
+                return getData(params[0]);
+            }
+            catch (Exception e)
+            {
+                return "Network Error";
+            }
+
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            try
+            {
+                System.out.println(s);
+                JSONArray arr = new JSONArray(s);
+                for (int i = 0; i < arr.length(); i++) {
+                    try {
+
+                        JSONObject c = arr.getJSONObject(i);
+                        String v1 = c.getString("Email");
+                        String v2 = c.getString("Password");
+                        String v3 = c.getString("Count");
+                        String v4 = c.getString("_id");
+
+                        Log.d("oooooo",v4);
+
+                        HashMap<String, String> map = new HashMap<String, String>();
+
+                        map.put("Email", v1);
+                        map.put("Password", v2);
+                        map.put("Count", v3);
+                        map.put("_id", v4);
+
+
+                        jsonlist.add(map);
+                    }
+                    catch(Exception e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            catch(Exception e)
+            {
+                e.printStackTrace();
+            }
+
+
+            if(progressDialog!=null)
+            {
+                progressDialog.dismiss();
+            }
+
+            c=1;
+
+        }
+    }
+
+    private String getData(String UrlPath) throws IOException {
+        StringBuilder result = new StringBuilder();
+        BufferedReader bufferedReader = null;
+
+        String name;
+
+        try
+        {
+
+            URL url = new URL(UrlPath);
+            HttpURLConnection urlConnection = (HttpURLConnection)url.openConnection();
+            urlConnection.setReadTimeout(10000);
+            urlConnection.setConnectTimeout(10000);
+            urlConnection.setRequestMethod("GET");
+            urlConnection.setRequestProperty("Content-Type", "application/json");
+            urlConnection.connect();
+
+            InputStream inputStream = urlConnection.getInputStream();
+            bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+            String line;
+
+            while((line = bufferedReader.readLine()) != null)
+            {
+                result.append(line).append("\n");
+            }
+
+            String s = result.toString();
+
+            return s;
 
 
 
 
+        }finally {
+            if(bufferedReader != null)
+            {
+                bufferedReader.close();
+            }
+        }
     }
 
     @Override

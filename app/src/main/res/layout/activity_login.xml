@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#8A0707"
-    tools:context=".Login.LoginActivity"
+    tools:context=".LoginActivity"
     >
 
     <TextView
@@ -13,7 +13,7 @@
         android:layout_marginBottom="16dp"
         android:layout_marginTop="22dp"
         android:gravity="center_horizontal"
-        android:text="Blood Donation\nManagement System"
+        android:text="Blood Bank\nManagement System"
         android:textColor="#fff"
         android:textSize="26sp"
         android:textStyle="bold" />

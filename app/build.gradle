@@ -27,4 +27,5 @@ dependencies {
     compile 'com.android.support:design:24.0.0'
     compile 'com.android.support:cardview-v7:24.0.0'
     compile 'com.android.support:recyclerview-v7:24.0.0'
+    compile 'org.mongodb:mongo-java-driver:3.4.0-rc1'
 }

@@ -5,23 +5,16 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.jatgo.bloodbanksystem.AboutUs.About_Us;
 import com.jatgo.bloodbanksystem.Details.Detail;
-import com.jatgo.bloodbanksystem.Details.DetailsFrag;
 import com.jatgo.bloodbanksystem.Donate.DonateFrag;
-import com.jatgo.bloodbanksystem.Home_Panel.panel;
 import com.jatgo.bloodbanksystem.Request.ReqFrag;
 import com.jatgo.bloodbanksystem.Upcoming.Upcoming_Camps;
 
@@ -55,11 +48,10 @@ public class Home extends AppCompatActivity{
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new Upcoming_Camps(), "Upcoming");
-        adapter.addFragment(new DonateFrag(), "Donate");
+        //adapter.addFragment(new DonateFrag(), "Donate");
         adapter.addFragment(new ReqFrag(), "Request");
         viewPager.setAdapter(adapter);
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -76,10 +68,11 @@ public class Home extends AppCompatActivity{
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        else if(id == R.id.action_det)
+//        if (id == R.id.action_settings) {
+//            Intent i = new Intent(Home.this, test1.class);
+//            startActivity(i);
+//        }
+        if(id == R.id.action_det)
         {
             Toast.makeText(Home.this,"Opens Details", Toast.LENGTH_LONG).show();
             Intent i = new Intent(Home.this, Detail.class);
@@ -87,7 +80,7 @@ public class Home extends AppCompatActivity{
         }
         else if(id == R.id.action_log)
         {
-            Toast.makeText(Home.this,"Logs Out", Toast.LENGTH_LONG).show();
+            Toast.makeText(Home.this,"Logging Out", Toast.LENGTH_LONG).show();
             Intent i = new Intent(Home.this, LoginActivity.class);
             startActivity(i);
         }

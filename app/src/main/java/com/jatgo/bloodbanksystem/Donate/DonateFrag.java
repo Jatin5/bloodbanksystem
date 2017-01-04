@@ -3,6 +3,7 @@ package com.jatgo.bloodbanksystem.Donate;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.annotation.Nullable;
@@ -19,6 +20,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -48,17 +50,14 @@ import java.util.Locale;
  */
 public class DonateFrag extends Fragment {
 
+
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View v=inflater.inflate(R.layout.content_donate_blood,container,false);
 
-
-/*
-        sharedpreferences = getContext().getSharedPreferences("MyPref", MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedpreferences.edit();
-*/
         dateFormatter = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
 
         date = (EditText)v.findViewById(R.id.editText5);
@@ -66,6 +65,7 @@ public class DonateFrag extends Fragment {
         date.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
+
                 if (hasFocus) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                     final DatePicker datePicker = new DatePicker(getContext());
@@ -116,9 +116,22 @@ public class DonateFrag extends Fragment {
 
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            int hour = timePicker.getHour();
-                            int min = timePicker.getMinute();
-                            time.setText(hour + "-" + (min));
+
+                            int hour, minutes;
+
+                            if (Build.VERSION.SDK_INT >= 23 )
+                            {
+                                hour = timePicker.getHour();
+                                minutes = timePicker.getMinute();
+                            }
+                            else
+                            {
+                                hour = timePicker.getCurrentHour();
+                                minutes = timePicker.getCurrentMinute();
+                            }
+
+                            time.setText(hour + "-" + (minutes));
+
                         }
                     });
                     builder.show();
@@ -130,7 +143,7 @@ public class DonateFrag extends Fragment {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                createEvent(v);
+                Toast.makeText(getContext(),"Will submit details",Toast.LENGTH_SHORT).show();
             }
         });
 
